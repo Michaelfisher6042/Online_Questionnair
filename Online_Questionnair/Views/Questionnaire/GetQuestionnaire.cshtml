@@ -1,0 +1,124 @@
+﻿@model IQueryable<Online_Questionnair.ViewModels.QuestionnaireViewModel>
+
+@{
+    ViewBag.Title = "Questionnaire";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+@{
+    string class_div = "";
+}
+
+<h2>GetQuestionnaire</h2>
+
+<div class="Quiz">
+
+    <h4 style="margin-top: 4%;"> <span class="label label-info">Questions :</span> </h4>
+
+    @if (Model != null && Model.Any())
+    {
+
+        foreach (var question in Model)
+        {
+            <div class="BlockQ" style="border: 1px solid #bdbdbd; width: 75%; border-radius: 4px; margin-top: 40px; background-color: #f0ffff; padding: 8px;">
+
+                <div class="Question" style="padding: 2%;">
+                    <span class="label label-warning"> @string.Format("{0}{1}.", "Q", question.QuestionId)</span>
+                    <span id="@string.Format("{0}{1}", "ID_Q", @question.QuestionId)" style="display:none;">@question.QuestionId</span>
+                    <p style="display: inline; padding: 2%;" id="@string.Format("{0}{1}", "Q", question.QuestionId)">@question.QuestionText</p>
+                </div>
+
+                @if (question.IsSubmit == true)
+                {
+                    class_div = "div_disabled";
+                }
+                else
+                {
+                    class_div = "";
+                }
+                <div class="@class_div" style="margin-left: 8%;">
+
+                    @foreach (var choice in question.Answers)
+                    {
+                        <label class="radio-inline">
+                            @if (question.AnswerId != null)
+                            {
+                                <input type="radio" class="btnRadio" name="@string.Format("{0}{1}", "inlineRadioOptions",question.QuestionId)" data-val="@question.QuestionId" id="@string.Format("{0}{1}", "inlineRadio", question.QuestionId)" checked="checked" value="@choice.AnswerId" style="margin-left: -16px;"> @choice.AnswerText
+                            }
+                            else
+                            {
+                                <input type="radio" class="btnRadio" name="@string.Format("{0}{1}", "inlineRadioOptions",question.QuestionId)" data-val="@question.QuestionId" id="@string.Format("{0}{1}", "inlineRadio", question.QuestionId)" value="@choice.AnswerId" style="margin-left: -16px;"> @choice.AnswerText
+                            }
+                        </label><br />
+                        //countR++;
+                    }
+
+                </div> <!--END Choices-->
+                @*<div id="@string.Format("{0}{1}{2}", "Ans","Q", count)">
+
+
+                    </div>*@
+
+            </div> <!-- END BlockQ -->
+            //count++;
+        }
+        @*<span id="countQuections" style="display:none;">@count</span>*@
+        <br />
+        <br />
+        <a href='@Url.Action("GetQuestionnaire","Questionnaire", new { clickAct = "Previous"})'><< Previous</a>
+        <a href='@Url.Action("GetQuestionnaire","Questionnaire", new { clickAct = "Next"})'>Next >></a>
+        <br />
+        <br />
+        <button type="button" id="SubmitQuestionnaire" class="btn btn-default" style="margin-top: 10px;"><span class="glyphicon glyphicon-ok"></span>  Submit Questionnaire </button>
+    }
+
+</div> <!-- END QUIZ -->
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.btnRadio').click(function () {
+
+                debugger;
+                var sel = $(this).attr('data-val');
+                var resultQuiz = [], countQuestion = parseInt(sel), question = {}, j = 1;
+
+                //for (var i = 1; i < countQuestion; i++) {
+                    question = {
+                        QuestionID: $('#ID_Q' + countQuestion).text(),
+                        QuestionText: $('#Q' + countQuestion).text(),
+                        AnswerQ: $('input[name=inlineRadioOptions' + countQuestion + ']:checked').val()
+                    }
+
+                    resultQuiz.push(question);
+                //}
+
+
+                $.ajax({
+
+                    type: 'POST',
+                    url: '@Url.Action("SaveQuestionnaire_Answers", "Questionnaire")',
+                    data: { '': resultQuiz },
+
+                    success: function (response) {
+
+                    }
+                });
+
+            });
+
+            $('#SubmitQuestionnaire').click(function () {
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("SubmitQuestionnaire", "Questionnaire")',
+                    success: function (response) {
+                        alert('Data submitted successfully');
+                    }
+                });
+
+            });
+
+        });
+    </script>
+}

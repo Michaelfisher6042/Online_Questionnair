@@ -1,0 +1,15 @@
+﻿@model Online_Questionnair.ViewModels.ResultViewModel
+
+@{
+    ViewBag.Title = "GetResult";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Questionnaire Result</h2>
+
+<div class="form-group">
+    <label class="form-control">
+        You have answered @Model.CorrectAnswers Questionnair(s) correctly.
+    </label>
+</div>
+
