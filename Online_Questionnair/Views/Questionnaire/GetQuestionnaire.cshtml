@@ -6,80 +6,80 @@
 
 }
 
-@{
+@using (Html.BeginForm("SubmitQuestionnaire", "Questionnaire", FormMethod.Post))
+{
+
     string class_div = "";
-}
 
-<h2>GetQuestionnaire</h2>
+    <h2>GetQuestionnaire</h2>
 
-<div class="Quiz">
+    <div class="Quiz">
 
-    <h4 style="margin-top: 4%;"> <span class="label label-info">Questions :</span> </h4>
+        <h4 style="margin-top: 4%;"> <span class="label label-info">Questions :</span> </h4>
 
-    @if (Model != null && Model.Any())
-    {
-
-        foreach (var question in Model)
+        @if (Model != null && Model.Any())
         {
-            <div class="BlockQ" style="border: 1px solid #bdbdbd; width: 75%; border-radius: 4px; margin-top: 40px; background-color: #f0ffff; padding: 8px;">
 
-                <div class="Question" style="padding: 2%;">
-                    <span class="label label-warning"> @string.Format("{0}{1}.", "Q", question.QuestionId)</span>
-                    <span id="@string.Format("{0}{1}", "ID_Q", @question.QuestionId)" style="display:none;">@question.QuestionId</span>
-                    <p style="display: inline; padding: 2%;" id="@string.Format("{0}{1}", "Q", question.QuestionId)">@question.QuestionText</p>
-                </div>
+            foreach (var question in Model)
+            {
+                <div class="BlockQ" style="border: 1px solid #bdbdbd; width: 75%; border-radius: 4px; margin-top: 40px; background-color: #f0ffff; padding: 8px;">
 
-                @if (question.IsSubmit == true)
-                {
-                    class_div = "div_disabled";
-                }
-                else
-                {
-                    class_div = "";
-                }
-                <div class="@class_div" style="margin-left: 8%;">
+                    <div class="Question" style="padding: 2%;">
+                        <span class="label label-warning"> @string.Format("{0}{1}.", "Q", "")</span>
+                        <span id="@string.Format("{0}{1}", "ID_Q", @question.QuestionId)" style="display:none;">@question.QuestionId</span>
+                        <p style="display: inline; padding: 2%;" id="@string.Format("{0}{1}", "Q", question.QuestionId)">@question.QuestionText</p>
+                    </div>
 
-                    @foreach (var choice in question.Answers)
+                    @if (question.IsSubmit == true)
                     {
-                        <label class="radio-inline">
-                            @if (question.AnswerId != null)
-                            {
-                                <input type="radio" class="btnRadio" name="@string.Format("{0}{1}", "inlineRadioOptions",question.QuestionId)" data-val="@question.QuestionId" id="@string.Format("{0}{1}", "inlineRadio", question.QuestionId)" checked="checked" value="@choice.AnswerId" style="margin-left: -16px;"> @choice.AnswerText
-                            }
-                            else
-                            {
-                                <input type="radio" class="btnRadio" name="@string.Format("{0}{1}", "inlineRadioOptions",question.QuestionId)" data-val="@question.QuestionId" id="@string.Format("{0}{1}", "inlineRadio", question.QuestionId)" value="@choice.AnswerId" style="margin-left: -16px;"> @choice.AnswerText
-                            }
-                        </label><br />
-                        //countR++;
+                        class_div = "div_disabled";
                     }
+                    else
+                    {
+                        class_div = "";
+                    }
+                    <div class="@class_div" style="margin-left: 8%;">
 
-                </div> <!--END Choices-->
-                @*<div id="@string.Format("{0}{1}{2}", "Ans","Q", count)">
+                        @foreach (var choice in question.Answers)
+                        {
+                            <label class="radio-inline">
+                                @if (question.AnswerId != null && question.AnswerId == choice.AnswerId)
+                                {
+                                    <input type="radio" class="btnRadio" name="@string.Format("{0}{1}", "inlineRadioOptions",question.QuestionId)" data-val="@question.QuestionId" id="@string.Format("{0}{1}", "inlineRadio", question.QuestionId)" checked="checked" value="@choice.AnswerId" style="margin-left: -16px;"> @choice.AnswerText
+                                }
+                                else
+                                {
+                                    <input type="radio" class="btnRadio" name="@string.Format("{0}{1}", "inlineRadioOptions",question.QuestionId)" data-val="@question.QuestionId" id="@string.Format("{0}{1}", "inlineRadio", question.QuestionId)" value="@choice.AnswerId" style="margin-left: -16px;"> @choice.AnswerText
+                                }
+                            </label><br />
+                            //countR++;
+                        }
+
+                    </div> <!--END Choices-->
+                    @*<div id="@string.Format("{0}{1}{2}", "Ans","Q", count)">
 
 
-                    </div>*@
+                        </div>*@
 
-            </div> <!-- END BlockQ -->
-            //count++;
+                </div> <!-- END BlockQ -->
+                //count++;
+            }
+            @*<span id="countQuections" style="display:none;">@count</span>*@
+            <br />
+            <br />
+            <a href='@Url.Action("GetQuestionnaire","Questionnaire", new { clickAct = "Previous"})'><< Previous</a>
+            <a href='@Url.Action("GetQuestionnaire","Questionnaire", new { clickAct = "Next"})'>Next >></a>
+            <br />
+            <br />
+            <button type="submit" id="SubmitQuestionnaire" class="btn btn-default" style="margin-top: 10px;"><span class="glyphicon glyphicon-ok"></span>  Submit Questionnaire </button>
         }
-        @*<span id="countQuections" style="display:none;">@count</span>*@
-        <br />
-        <br />
-        <a href='@Url.Action("GetQuestionnaire","Questionnaire", new { clickAct = "Previous"})'><< Previous</a>
-        <a href='@Url.Action("GetQuestionnaire","Questionnaire", new { clickAct = "Next"})'>Next >></a>
-        <br />
-        <br />
-        <button type="button" id="SubmitQuestionnaire" class="btn btn-default" style="margin-top: 10px;"><span class="glyphicon glyphicon-ok"></span>  Submit Questionnaire </button>
-    }
 
-</div> <!-- END QUIZ -->
-@section scripts{
-    <script type="text/javascript">
+    </div> <!-- END QUIZ -->
+    @section scripts{
+        <script type="text/javascript">
         $(document).ready(function () {
             $('.btnRadio').click(function () {
 
-                debugger;
                 var sel = $(this).attr('data-val');
                 var resultQuiz = [], countQuestion = parseInt(sel), question = {}, j = 1;
 
@@ -107,7 +107,7 @@
 
             });
 
-            $('#SubmitQuestionnaire').click(function () {
+            @*$('#SubmitQuestionnaire').click(function () {
 
                 $.ajax({
                     type: 'POST',
@@ -117,8 +117,9 @@
                     }
                 });
 
-            });
+            });*@
 
         });
-    </script>
+        </script>
+    }
 }
